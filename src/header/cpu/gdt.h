@@ -57,7 +57,7 @@ struct SegmentDescriptor {
 } __attribute__((packed));
 
 /**
- * Global Descriptor Table containing list of segment descriptor. One GDT already defined in memory.c.
+ * Global Descriptor Table containing list of segment descriptor. One GDT already defined in gdt.c.
  * More details at https://wiki.osdev.org/GDT_Tutorial
  * @param table Fixed-width array of SegmentDescriptor with size GDT_MAX_ENTRY_COUNT
  */
@@ -67,7 +67,7 @@ struct GlobalDescriptorTable {
 
 /**
  * GDTR, carrying information where's the GDT located and GDT size.
- * Global kernel variable defined at memory.c.
+ * Global kernel variable defined at gdt.c.
  * 
  * @param size    Global Descriptor Table size, use sizeof operator
  * @param address GDT address, GDT should already defined properly

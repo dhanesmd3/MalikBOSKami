@@ -1,5 +1,6 @@
 #include "header/cpu/interrupt.h"
 #include "header/cpu/portio.h"
+#include "header/driver/keyboard.h"
 
 void io_wait(void) {
     out(0x80, 0);   // port 0x80 nganggur, cuma buat delay ~1us
@@ -34,16 +35,20 @@ void pic_remap(void) {
     out(PIC2_DATA, PIC_DISABLE_ALL_MASK);
 }
 
+void activate_keyboard_interrupt(void) {
+    // buka mask IRQ1 aja, IRQ lain tetap ketutup
+    out(PIC1_DATA, in(PIC1_DATA) & ~(1 << IRQ_KEYBOARD));
+}
+
 void main_interrupt_handler(struct InterruptFrame frame) {
     switch (frame.int_number) {
         case 0x4:
             // tes int $0x4, pasang breakpoint di sini
             break;
 
-        // Alek aktifin ini pas keyboard_isr() udah ada:
-        // case PIC1_OFFSET + IRQ_KEYBOARD:
-        //     keyboard_isr();
-        //     break;
+        case PIC1_OFFSET + IRQ_KEYBOARD:
+            keyboard_isr();
+            break;
 
         default:
             break;

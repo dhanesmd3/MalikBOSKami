@@ -66,10 +66,6 @@ void get_keyboard_buffer(char *buf) {
     keyboard_state.keyboard_buffer = '\0';
 }
 
-void activate_keyboard_interrupt(void) {
-    out(PIC1_DATA, in(PIC1_DATA) & ~(1 << IRQ_KEYBOARD));
-}
-
 /* -- Keyboard ISR -- */
 
 /**

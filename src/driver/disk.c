@@ -9,7 +9,7 @@ static void ATA_busy_wait(void) {
 }
 
 static void ATA_DRQ_wait(void) {
-    while (!(in(0x1F7) & ATA_STATUS_RDY));
+    while (!(in(0x1F7) & ATA_STATUS_DRQ));
 }
 
 void read_blocks(void *ptr, uint32_t logical_block_address, uint8_t block_count) {
@@ -46,4 +46,8 @@ void write_blocks(const void *ptr, uint32_t logical_block_address, uint8_t block
         for (uint32_t j = 0; j < HALF_BLOCK_SIZE; j++)
             out16(0x1F0, ((const uint16_t*) ptr)[HALF_BLOCK_SIZE * i + j]);
     }
+
+    /* Cache flush biar data beneran ketulis ke disk */
+    out(0x1F7, 0xE7);
+    ATA_busy_wait();
 }

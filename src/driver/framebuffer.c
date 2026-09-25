@@ -49,14 +49,9 @@ void framebuffer_set_cursor(uint8_t r, uint8_t c) {
 /**
  * framebuffer_clear — Blank all 80×25 cells.
  *
- * Writes 0x00 (null character) and 0x07 (light-grey on black) to every byte
- * of the framebuffer.  memset over the full 80*25*2 = 4000 byte region works
- * because both the character byte (0x00) and the colour byte (0x07 != 0x00)
- * need separate initialisation; we do two passes via a loop rather than a single
- * memset to keep the colour byte correct.
- *
- * Alternative: memset the whole region to 0x00 first, then fill colour bytes.
- * Current approach: one loop, explicit per-cell write — clear and readable.
+ * Writes 0x00 (null character) and 0x07 (light-grey on black) to every cell.
+ * A single memset can't be used because the character byte and the colour
+ * byte need different values, so each cell is written via framebuffer_write().
  */
 void framebuffer_clear(void) {
     for (uint8_t row = 0; row < FRAMEBUFFER_HEIGHT; row++) {
