@@ -5,6 +5,7 @@
 #include "header/cpu/idt.h"
 #include "header/kernel-entrypoint.h"
 #include "header/text/framebuffer.h"
+#include "header/driver/keyboard.h"
 
 void kernel_setup(void) {
     load_gdt(&_gdt_gdtr);   // punya Adnan
@@ -16,5 +17,17 @@ void kernel_setup(void) {
 
     __asm__("int $0x4");    // tes IDT: harus masuk main_interrupt_handler, bukan triple fault
 
-    while (true);
+    activate_keyboard_interrupt();  // buka mask IRQ1, sisanya tetap masked
+    keyboard_state_activate();
+
+    int row = 0, col = 0;
+    while (true) {
+        char c;
+        get_keyboard_buffer(&c);
+        if (c) {
+            framebuffer_write(row, col, c, 0xF, 0);
+            if (++col >= FRAMEBUFFER_WIDTH) { ++row; col = 0; }
+            framebuffer_set_cursor(row, col);
+        }
+    }
 }
